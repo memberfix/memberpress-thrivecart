@@ -1,0 +1,8 @@
+{
+  "require": {
+    "thrivecart/php-api": "^1.0"
+  },
+  "config": {
+    "platform-check": false
+  }
+}
