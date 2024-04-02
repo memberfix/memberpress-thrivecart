@@ -73,16 +73,19 @@ class MPTC_Webhook_Controller{
 			$user = $this->get_or_create_user($this->event->customer->email);
 			$member = new MeprUser($user->ID);
 			$latest_txns = $member->recent_transactions(1);
-			// $tc_product = 'product-' . $this->mapped_products[0]->tc;
        		$tc_product_id = $this->event->base_product; 
 			$tc_product = 'product-' . $tc_product_id;  
 
-
-
-			// error_log('handle_payments tc_product: ' . print_r($tc_product, true));
-			//$whole_object = $this; 
-       		//error_log('handle_payments whole_object: ' . print_r($whole_object, true)); 
-
+			 //expiration date 
+			 $future_charges = $this->event->order->future_charges; // Accessing future charges array
+			 // Checking if there are future charges
+			 if (!empty($future_charges)) {
+				 // Assuming there's only one future charge in this example
+				 $due_date = $future_charges[0]->due; // Extracting due date
+			 } else {
+				 // No future charges found
+				 $due_date = null; // Assuming this product will never expire
+			 }
 
 			if(!empty($latest_txns)){
 				$created = DateTime::createFromFormat('Y-m-d H:i:s', $latest_txns[0]->created_at);
@@ -105,6 +108,8 @@ class MPTC_Webhook_Controller{
             $prd = new MeprProduct($product->mepr);
             // error_log('handle_payments prd: ' . print_r($prd, true));
             $txn = $this->add_transaction($prd, $user);
+			$txn->expires_at = $due_date;
+            $txn->save();
             // error_log('handle_payments txn: ' . print_r($txn, true)); 
             if ($txn) { 
                 $success = true; // At least one transaction was successful 
