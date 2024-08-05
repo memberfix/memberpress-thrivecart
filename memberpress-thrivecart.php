@@ -7,7 +7,7 @@
  * Version:           1.2.1
  * Requires at least: 5.2
  * Requires PHP:      7.3
- * Author:            Sorin Marta @ MemberFix
+ * Author:            MemberFix
  * Author URI:        https://memberfix.rocks
  */
 
